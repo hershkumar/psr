@@ -1,9 +1,8 @@
 import socket
 import pyaudio
-import json
-import base64
-import asyncio
+import speech_recognition as sr
 from ctypes import *
+import threading
 
 # error handling for ALSA
 ERROR_HANDLER_FUNC = CFUNCTYPE(None, c_char_p, c_int, c_char_p, c_int, c_char_p)
@@ -30,19 +29,36 @@ audio_stream = p.open(
     channels=1,
     input=True,
 )
-    
+
 print("Audio stream opened. Connecting to server...")
-# connect to the server.py socket
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((HOST, PORT))
-message = input(" -> ")  # take input
 
-while message.lower().strip() != 'bye':
-    s.send(message.encode())  # send message
-    data = s.recv(1024).decode()  # receive response
+transcriptions = []
 
-    print('Received from server: ' + data)  # show in terminal
+def server_client():
+    # connect to the server.py socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((HOST, PORT))
+    message = input(" -> ")  # take input
 
-    message = input(" -> ")  # again take input
+    while message.lower().strip() != 'bye':
+        s.send(message.encode())  # send message
+        data = s.recv(1024).decode()  # receive response
 
-s.close()  # close the connection
+        print('Received from server: ' + data)  # show in terminal
+
+        message = input(" -> ")  # again take input
+
+    s.close()  # close the connection
+
+def transcribe_audio():
+    # transcribe the audio stream
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Say something!")
+        audio = r.listen(source)
+        transcription = r.recognize_vosk(audio)
+        print("Transcription: ", transcription.text)
+
+
+t = threading.Thread(target=server_client)
+t.start()
