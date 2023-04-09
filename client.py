@@ -55,10 +55,11 @@ def transcribe_audio():
     print("Transcribing audio stream...")
     r = sr.Recognizer()
     with sr.Microphone() as source:
+        r.adjust_for_ambient_noise(source)
         print("Say something!")
         audio = r.listen(source)
         transcription = r.recognize_vosk(audio)
-        print("Transcription: ", transcription.text)
+        print(transcription)
 
 
 server_thread = threading.Thread(target=server_client)
