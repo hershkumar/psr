@@ -14,17 +14,19 @@ def process():
     s.listen(1)
     
     print("Socket server initialized. Waiting for connection...")
-    conn, addr = s.accept()
-    print("Connected by", addr)
     while True:
-        data = conn.recv(1024).decode()
-        if not data:
-            break
-        print("Received", data)
-        data = input("Enter data to send: ")
-        conn.send(data.encode())
-    print("Closing connection...")
-    conn.close()
+        conn, addr = s.accept()
+        print("Connected by", addr)
+        while True:
+            data = conn.recv(1024).decode()
+            if not data:
+                break
+            print("Received", data)
+            data = input("Enter data to send: ")
+            conn.send(data.encode())
+        print("Closing connection...")
+        conn.close()
+    print("Closing socket server...")
 
 
 def start_server():

@@ -52,6 +52,7 @@ def server_client():
 
 def transcribe_audio():
     # transcribe the audio stream
+    print("Transcribing audio stream...")
     r = sr.Recognizer()
     with sr.Microphone() as source:
         print("Say something!")
@@ -60,5 +61,8 @@ def transcribe_audio():
         print("Transcription: ", transcription.text)
 
 
-t = threading.Thread(target=server_client)
-t.start()
+server_thread = threading.Thread(target=server_client)
+transcription_thread = threading.Thread(target=transcribe_audio)
+
+transcription_thread.start()
+server_thread.start()
