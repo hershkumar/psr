@@ -63,7 +63,9 @@ def transcribe_audio():
 
 
 server_thread = threading.Thread(target=server_client)
-transcription_thread = threading.Thread(target=transcribe_audio)
+# transcription_thread = threading.Thread(target=transcribe_audio)
 
-transcription_thread.start()
-server_thread.start()
+# transcription_thread.start()
+transcribe_audio()
+
+# server_thread.start()
